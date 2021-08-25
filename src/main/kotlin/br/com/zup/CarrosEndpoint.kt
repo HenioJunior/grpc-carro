@@ -7,7 +7,7 @@ import javax.inject.Singleton
 import javax.validation.ConstraintViolationException
 
 @Singleton
-class CarroEndpoint(@Inject val repository: CarroRepository): CarrosGrpcServiceGrpc.CarrosGrpcServiceImplBase() {
+class CarrosEndpoint(@Inject val repository: CarroRepository): CarrosGrpcServiceGrpc.CarrosGrpcServiceImplBase() {
 
     override fun adicionar(request: CarroRequest, responseObserver: StreamObserver<CarroResponse>) {
         if(repository.existsByPlaca(request.placa)) {
