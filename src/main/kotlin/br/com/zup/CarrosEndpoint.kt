@@ -26,7 +26,7 @@ class CarrosEndpoint(@Inject val repository: CarroRepository): CarrosGrpcService
             repository.save(carro)
         }catch(e: ConstraintViolationException) {
             responseObserver.onError(Status.INVALID_ARGUMENT
-                .withDescription("dados de entrada inválidos")
+                .withDescription("dados de entrada invalidos")
                 .asRuntimeException())
         }
         responseObserver.onNext(CarroResponse.newBuilder().setId(carro.id!!).build())

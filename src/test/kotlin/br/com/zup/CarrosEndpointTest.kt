@@ -29,9 +29,9 @@ internal class CarrosEndpointTest(val repository : CarroRepository, val grpcClie
 
         //acao
         val response = grpcClient.adicionar(CarroRequest.newBuilder()
-                                                        .setModelo("Gol")
-                                                        .setPlaca("HPX-1234")
-                                                        .build())
+            .setModelo("Gol")
+            .setPlaca("HPX-1234")
+            .build())
 
         //validacao
         with(response) {
@@ -49,18 +49,38 @@ internal class CarrosEndpointTest(val repository : CarroRepository, val grpcClie
         val existente = repository.save(Carro(modelo = "Palio", placa = "OIP-9876"))
 
         //acao
-       val error = assertThrows<StatusRuntimeException> {
-           grpcClient.adicionar(CarroRequest.newBuilder()
-                                           .setModelo("Versa")
-                                           .setPlaca(existente.placa)
-                                           .build())
-       }
+        val error = assertThrows<StatusRuntimeException> {
+            grpcClient.adicionar(CarroRequest.newBuilder()
+                .setModelo("Versa")
+                .setPlaca(existente.placa)
+                .build())
+        }
 
         //validacao
         with(error) {
             assertEquals(Status.ALREADY_EXISTS.code, status.code)
             assertEquals("carro com placa existente", status.description)
-}
+        }
+    }
+
+    @Test
+    fun `nao deve adicionar novo carro quando dados de entrada forem invalidos`() {
+
+        //cenario
+        repository.deleteAll()
+
+        //acao
+        val error = assertThrows<StatusRuntimeException> {
+            grpcClient.adicionar(CarroRequest.newBuilder().build())
+        }
+
+        //validacao
+        with(error) {
+            assertEquals(Status.INVALID_ARGUMENT.code, status.code)
+            assertEquals("dados de entrada invalidos", status.description)
+            // TODO: verificar as violações da bean validations
+        }
+
     }
 
     @Factory
